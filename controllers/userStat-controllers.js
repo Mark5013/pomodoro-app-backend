@@ -43,3 +43,31 @@ export const updateMinutes = async (req, res, next) => {
 		}
 	});
 };
+
+export const getDatesMinutes = (req, res, next) => {
+	const { uid, date } = req.params;
+	const [year, month, dayNum] = date.split("-");
+
+	User.findOne({ googleId: uid }, function (err, doc) {
+		if (err) {
+			return next(
+				new Error("Something went wrong when searching for user!")
+			);
+		} else if (!doc) {
+			return next(new Error("No user found"));
+		} else {
+			const result = doc.userLogs.find(
+				(log) =>
+					log.year === year &&
+					log.month === month &&
+					log.dayNum === dayNum
+			);
+			if (result) {
+				console.log(result.minutes);
+				res.status(200).json({ time: result.minutes });
+			} else {
+				res.status(200).json({ time: 0 });
+			}
+		}
+	});
+};

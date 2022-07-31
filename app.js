@@ -41,7 +41,14 @@ export const User = new mongoose.model("User", userSchema);
 
 // set headers
 app.use((req, res, next) => {
-	res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+	const corsWhiteList = [
+		"http://localhost:3000",
+		"http://localhost:3000/stats",
+	];
+	if (corsWhiteList.indexOf(req.headers.origin) !== -1) {
+		res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+	}
+
 	res.setHeader("Access-Control-Allow-Credentials", true);
 	res.setHeader(
 		"Access-Control-Allow-Headers",
