@@ -22,12 +22,12 @@ mongoose.connect(
 const userSchema = new mongoose.Schema({
 	username: String,
 	googleId: String,
+	totalMinutes: { type: Number, default: 0 },
 	userLogs: [
 		{
 			year: String,
 			month: String,
 			dayNum: String,
-			day: String,
 			minutes: Number,
 		},
 	],

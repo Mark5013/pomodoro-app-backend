@@ -5,7 +5,7 @@ dotenv.config();
 // updates how long the user has spent in pomodoro mode
 export const updateMinutes = async (req, res, next) => {
 	// extract day, month, dayNum, year from body
-	const [day, month, dayNum, year] = req.body.dateStr.split(" ");
+	const [year, month, dayNum] = req.body.dateStr.split("-");
 	// find user by googleId
 	User.findOne({ googleId: req.body.userId }, function (err, doc) {
 		if (err) {
@@ -26,15 +26,16 @@ export const updateMinutes = async (req, res, next) => {
 			// if date obj exists, update the minutes else create the date object and push it in
 			if (dateObj) {
 				dateObj.minutes += req.body.secondsPassed / 60;
+				doc.totalMinutes += req.body.secondsPassed / 60;
 			} else {
 				dateObj = {
 					year,
 					month,
 					dayNum,
-					day,
 					minutes: req.body.secondsPassed / 60,
 				};
 				doc.userLogs.push(dateObj);
+				doc.totalMinutes += req.body.secondsPassed / 60;
 			}
 
 			// save user
