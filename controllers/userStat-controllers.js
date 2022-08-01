@@ -71,3 +71,51 @@ export const getDatesMinutes = (req, res, next) => {
 		}
 	});
 };
+
+export const getMonthsMinutes = (req, res, next) => {
+	const { uid, month } = req.params;
+	let totalTime = 0;
+	let monthString = month.toString().padStart(2, "0");
+	console.log(monthString);
+
+	User.findOne({ googleId: uid }, function (err, doc) {
+		if (err) {
+			return next(
+				new Error("Something went wrong when searching for user")
+			);
+		} else if (!doc) {
+			return next(new Error("No user found"));
+		} else {
+			doc.userLogs.forEach((log) =>
+				log.month === monthString
+					? (totalTime += log.minutes)
+					: (totalTime += 0)
+			);
+			res.status(200).json({ monthlyTime: totalTime });
+		}
+	});
+};
+
+export const getYearsMinutes = (req, res, next) => {
+	const { uid, year } = req.params;
+	let totalTime = 0;
+	let yearString = year.toString();
+	console.log(yearString);
+
+	User.findOne({ googleId: uid }, function (err, doc) {
+		if (err) {
+			return next(
+				new Error("Something went wrong when searching for user")
+			);
+		} else if (!doc) {
+			return next(new Error("No user found"));
+		} else {
+			doc.userLogs.forEach((log) =>
+				log.year === yearString
+					? (totalTime += log.minutes)
+					: (totalTime += 0)
+			);
+			res.status(200).json({ yearlyTime: totalTime });
+		}
+	});
+};
