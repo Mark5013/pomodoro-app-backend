@@ -2,6 +2,21 @@ import { User } from "../app.js";
 import dotenv from "dotenv";
 dotenv.config();
 
+const months = {
+	Jan: "01",
+	Feb: "02",
+	Mar: "03",
+	Apr: "04",
+	May: "05",
+	Jun: "06",
+	Jul: "07",
+	Aug: "08",
+	Sept: "09",
+	Oct: "10",
+	Nov: "11",
+	Dec: "12",
+};
+
 // updates how long the user has spent in pomodoro mode
 export const updateMinutes = async (req, res, next) => {
 	// extract day, month, dayNum, year from body
@@ -44,10 +59,14 @@ export const updateMinutes = async (req, res, next) => {
 	});
 };
 
+// gets the total minutes spent in pomodoro mode for a specified date
 export const getDatesMinutes = (req, res, next) => {
+	// extract params from url
 	const { uid, date } = req.params;
+	// split date into year, month, and dayNum
 	const [year, month, dayNum] = date.split("-");
 
+	// find user in data base with matching google id
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
 			return next(
@@ -56,12 +75,14 @@ export const getDatesMinutes = (req, res, next) => {
 		} else if (!doc) {
 			return next(new Error("No user found"));
 		} else {
+			// find the specific date
 			const result = doc.userLogs.find(
 				(log) =>
 					log.year === year &&
 					log.month === month &&
 					log.dayNum === dayNum
 			);
+			// if a date is found return the minutes else, return 0
 			if (result) {
 				console.log(result.minutes);
 				res.status(200).json({ time: result.minutes });
@@ -72,12 +93,15 @@ export const getDatesMinutes = (req, res, next) => {
 	});
 };
 
+// gets total time over month for current year
 export const getMonthsMinutes = (req, res, next) => {
+	// extract params from url
 	const { uid, month } = req.params;
-	let totalTime = 0;
 	let monthString = month.toString().padStart(2, "0");
-	console.log(monthString);
+	// get current year
+	const curYear = (new Date().getYear() + 1900).toString();
 
+	// find user in database with google id
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
 			return next(
@@ -86,21 +110,25 @@ export const getMonthsMinutes = (req, res, next) => {
 		} else if (!doc) {
 			return next(new Error("No user found"));
 		} else {
-			doc.userLogs.forEach((log) =>
-				log.month === monthString
-					? (totalTime += log.minutes)
-					: (totalTime += 0)
+			// accumulate total time over selected month in current year
+			const totalTime = doc.userLogs.reduce(
+				(acc, e) =>
+					e.month === monthString && e.year === curYear
+						? acc + e.minutes
+						: acc,
+				0
 			);
+			// return the time
 			res.status(200).json({ monthlyTime: totalTime });
 		}
 	});
 };
 
+// gets total time in pomodoro mode for the selected year
 export const getYearsMinutes = (req, res, next) => {
+	// extract uid and year from url
 	const { uid, year } = req.params;
-	let totalTime = 0;
 	let yearString = year.toString();
-	console.log(yearString);
 
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
@@ -110,12 +138,41 @@ export const getYearsMinutes = (req, res, next) => {
 		} else if (!doc) {
 			return next(new Error("No user found"));
 		} else {
-			doc.userLogs.forEach((log) =>
-				log.year === yearString
-					? (totalTime += log.minutes)
-					: (totalTime += 0)
+			// accumulate total time over the selected year
+			const totalTime = doc.userLogs.reduce(
+				(acc, e) => (e.year === yearString ? acc + e.minutes : acc),
+				0
 			);
+			// return the total time
 			res.status(200).json({ yearlyTime: totalTime });
+		}
+	});
+};
+
+// gets total time spent in pomodoro mode for the selected month and year
+export const getMonthAndYearMinutes = (req, res, next) => {
+	// extract uid, month, and year from url
+	const { uid, month, year } = req.params;
+
+	// search database for user with google id
+	User.findOne({ googleId: uid }, function (err, doc) {
+		if (err) {
+			return next(
+				new Error("Something went wrong when searching for user!")
+			);
+		} else if (!doc) {
+			return next(new Error("No user found"));
+		} else {
+			// accumulate total time over the selected month in the selected year
+			const totalTime = doc.userLogs.reduce(
+				(acc, e) =>
+					e.year === year && e.month === months[month]
+						? acc + e.minutes
+						: acc,
+				0
+			);
+			// return the result
+			res.status(200).json({ time: totalTime });
 		}
 	});
 };

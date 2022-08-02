@@ -3,7 +3,7 @@ import { updateMinutes } from "../controllers/userStat-controllers.js";
 import { getDatesMinutes } from "../controllers/userStat-controllers.js";
 import { getMonthsMinutes } from "../controllers/userStat-controllers.js";
 import { getYearsMinutes } from "../controllers/userStat-controllers.js";
-import { getWeeksMinutes } from "../controllers/userStat-controllers.js";
+import { getMonthAndYearMinutes } from "../controllers/userStat-controllers.js";
 
 const router = express.Router();
 
@@ -16,6 +16,6 @@ router.get("/getMonthsMinutes/:uid/:month", getMonthsMinutes);
 
 router.get("/getYearsMinutes/:uid/:year", getYearsMinutes);
 
-router.get("/getWeeksMinutes/:uid/:week", getWeeksMinutes);
+router.get("/getMonthAndYearMinutes/:uid/:month/:year", getMonthAndYearMinutes);
 
 export { router as userStatRoutes };
