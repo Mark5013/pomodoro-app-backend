@@ -5,6 +5,7 @@ import { loginRoutes } from "./routes/login-routes.js";
 import { logoutRoutes } from "./routes/logout-routes.js";
 import { userStatRoutes } from "./routes/userStat-routes.js";
 import { userTasksRoutes } from "./routes/userTasks-routes.js";
+import { userSettingsRoutes } from "./routes/userSettings-routes.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 dotenv.config();
@@ -32,6 +33,14 @@ const userSchema = new mongoose.Schema({
 		},
 	],
 	userTasks: [{ title: String, description: String, id: String }],
+	settings: {
+		type: Object,
+		default: {
+			pomodoroLength: "25",
+			shortBreakLength: "05",
+			longBreakLength: "15",
+		},
+	},
 });
 
 // use findOrCreate plugin for the userSchema
@@ -44,6 +53,7 @@ app.use((req, res, next) => {
 	const corsWhiteList = [
 		"http://localhost:3000",
 		"http://localhost:3000/stats",
+		"http://localhost:3000/settings",
 	];
 	if (corsWhiteList.indexOf(req.headers.origin) !== -1) {
 		res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
@@ -68,6 +78,9 @@ app.use("/stats", userStatRoutes);
 
 // tasks routes
 app.use("/tasks", userTasksRoutes);
+
+// settings routes
+app.use("/settings", userSettingsRoutes);
 
 // listen on port number
 app.listen(5000, (req, res) => {

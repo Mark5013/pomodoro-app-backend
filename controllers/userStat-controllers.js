@@ -21,6 +21,7 @@ const months = {
 export const updateMinutes = async (req, res, next) => {
 	// extract day, month, dayNum, year from body
 	const [year, month, dayNum] = req.body.dateStr.split("-");
+	console.log(req.body.millisecondsPassed);
 	// find user by googleId
 	User.findOne({ googleId: req.body.userId }, function (err, doc) {
 		if (err) {
@@ -40,17 +41,17 @@ export const updateMinutes = async (req, res, next) => {
 
 			// if date obj exists, update the minutes else create the date object and push it in
 			if (dateObj) {
-				dateObj.minutes += req.body.secondsPassed / 60;
-				doc.totalMinutes += req.body.secondsPassed / 60;
+				dateObj.minutes += req.body.millisecondsPassed / 60000;
+				doc.totalMinutes += req.body.millisecondsPassed / 60000;
 			} else {
 				dateObj = {
 					year,
 					month,
 					dayNum,
-					minutes: req.body.secondsPassed / 60,
+					minutes: req.body.millisecondsPassed / 60000,
 				};
 				doc.userLogs.push(dateObj);
-				doc.totalMinutes += req.body.secondsPassed / 60;
+				doc.totalMinutes += req.body.millisecondsPassed / 60000;
 			}
 
 			// save user

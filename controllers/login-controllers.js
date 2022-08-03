@@ -68,11 +68,8 @@ export const findOrCreateUser = (req, res, next) => {
 				return next(new Error("User couldn't be created/found"));
 			} else {
 				console.log(user);
+				res.status(200).json({ settings: user.settings });
 			}
 		}
 	);
-
-	res.status(200).json({
-		message: "User found/created",
-	});
 };
