@@ -9,6 +9,6 @@ export const logoutUser = (req, res, next) => {
 		});
 		res.status(200).json({ message: "cookie destroyed" });
 	} else {
-		res.status(200).json({ message: "No cookie found" });
+		res.status(400).json({ message: "No cookie found" });
 	}
 };

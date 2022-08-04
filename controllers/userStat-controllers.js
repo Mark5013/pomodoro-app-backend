@@ -56,7 +56,7 @@ export const updateMinutes = async (req, res, next) => {
 
 			// save user
 			doc.save();
-			res.status(200).json({ message: "Updated successfully" });
+			res.status(201).json({ message: "Updated successfully" });
 		}
 	});
 };
@@ -86,7 +86,6 @@ export const getDatesMinutes = (req, res, next) => {
 			);
 			// if a date is found return the minutes else, return 0
 			if (result) {
-				console.log(result.minutes);
 				res.status(200).json({ time: result.minutes });
 			} else {
 				res.status(200).json({ time: 0 });

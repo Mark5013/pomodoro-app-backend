@@ -34,7 +34,7 @@ export const loginUser = async (req, res, next) => {
 	}
 
 	// send back the access token
-	res.status(200).json(tokens.access_token);
+	res.status(201).json(tokens.access_token);
 };
 
 // uses users refresh token to get a new access token
@@ -61,7 +61,7 @@ export const refreshToken = async (req, res, next) => {
 			});
 			res.status(400).json({ message: "Invalid refresh token" });
 		} else {
-			res.status(200).json({ accessToken: credentials.access_token });
+			res.status(201).json({ accessToken: credentials.access_token });
 		}
 	}
 };
@@ -77,7 +77,7 @@ export const findOrCreateUser = (req, res, next) => {
 						"Something went wrong went with finding/creating the user",
 				});
 			} else {
-				res.status(200).json({ settings: user.settings });
+				res.status(201).json({ settings: user.settings });
 			}
 		}
 	);
