@@ -84,6 +84,6 @@ app.use("/tasks", userTasksRoutes);
 app.use("/settings", userSettingsRoutes);
 
 // listen on port number
-app.listen(5000, (req, res) => {
+app.listen(process.env.PORT || 5000, (req, res) => {
 	console.log("listening on port: 5000");
 });
