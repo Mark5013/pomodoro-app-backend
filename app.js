@@ -51,9 +51,9 @@ export const User = new mongoose.model("User", userSchema);
 // set headers
 app.use((req, res, next) => {
 	const corsWhiteList = [
-		"http://localhost:3000",
-		"http://localhost:3000/stats",
-		"http://localhost:3000/settings",
+		"https://62ec4cedb465cf41080868d6--cerulean-twilight-f16a3b.netlify.app",
+		"https://62ec4cedb465cf41080868d6--cerulean-twilight-f16a3b.netlify.app/stats",
+		"https://62ec4cedb465cf41080868d6--cerulean-twilight-f16a3b.netlify.app/settings",
 	];
 	if (corsWhiteList.indexOf(req.headers.origin) !== -1) {
 		res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
