@@ -51,10 +51,10 @@ export const User = new mongoose.model("User", userSchema);
 // set headers
 app.use((req, res, next) => {
 	const corsWhiteList = [
-		"https://cerulean-twilight-f16a3b.netlify.app/#/",
+		"https://cerulean-twilight-f16a3b.netlify.app/#",
 		"https://cerulean-twilight-f16a3b.netlify.app/#/stats",
 		"https://cerulean-twilight-f16a3b.netlify.app/#/settings",
-		"https://www.pomotracker.tech/#/",
+		"https://www.pomotracker.tech/#",
 		"https://www.pomotracker.tech/#/stats",
 		"https://www.pomotracker.tech/#/settings",
 		"http://localhost:3000/#",
