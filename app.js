@@ -51,9 +51,15 @@ export const User = new mongoose.model("User", userSchema);
 // set headers
 app.use((req, res, next) => {
 	const corsWhiteList = [
-		"https://62ec4cedb465cf41080868d6--cerulean-twilight-f16a3b.netlify.app",
-		"https://62ec4cedb465cf41080868d6--cerulean-twilight-f16a3b.netlify.app/stats",
-		"https://62ec4cedb465cf41080868d6--cerulean-twilight-f16a3b.netlify.app/settings",
+		"https://cerulean-twilight-f16a3b.netlify.app",
+		"https://cerulean-twilight-f16a3b.netlify.app/stats",
+		"https://cerulean-twilight-f16a3b.netlify.app/settings",
+		"https://pomotracker.tech",
+		"https://pomotracker.tech/stats",
+		"https://pomotracker.tech/settings",
+		"http://localhost:3000",
+		"http://localhost:3000/stats",
+		"http://localhost:3000/settings",
 	];
 	if (corsWhiteList.indexOf(req.headers.origin) !== -1) {
 		res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
