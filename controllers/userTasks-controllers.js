@@ -10,18 +10,16 @@ export const getUserTasks = async (req, res, next) => {
 	User.findOne({ googleId: userId }, function (err, doc) {
 		if (err) {
 			// handles err
-			return next(
-				new Error("Error occured when looking for google account")
-			);
+			res.status(500).json({
+				message: "Something went wrong when searching for user",
+			});
 		} else {
 			if (doc) {
 				// if user is found, return their tasks
 				res.status(200).json({ tasks: doc.userTasks });
 			} else {
-				// if user isn't found, throw error
-				return next(
-					new Error("Failed to find tasks associated with google id")
-				);
+				// if user isn't found
+				res.status(400).json({ message: "User doesn't exist" });
 			}
 		}
 	});
@@ -36,13 +34,20 @@ export const addTask = async (req, res, next) => {
 	// find the user associated with google id
 	User.findOne({ googleId: userId }, function (err, doc) {
 		if (err) {
-			return next(
-				new Error("Error occured when looking for google account")
-			);
+			res.status(500).json({
+				message: "Something went wrong when searching for user",
+			});
 		} else {
 			if (doc) {
 				// get user tasks from doc
 				const userTasks = doc.userTasks;
+
+				// handle case where users task list has 10 or more tasks
+				if (userTasks.length >= 10) {
+					res.status(400).json({
+						message: "User already has 10 tasks",
+					});
+				}
 
 				// spread task data and add id to the newly created task
 				const newTask = { ...task, id: uuidv4() };
@@ -54,9 +59,7 @@ export const addTask = async (req, res, next) => {
 				// send back newly created task
 				res.status(201).json({ createdTask: newTask });
 			} else {
-				return next(
-					new Error("Failed to find account when trying to add task")
-				);
+				res.status(400).json({ message: "User doesn't exist" });
 			}
 		}
 	});
@@ -72,9 +75,9 @@ export const editTask = async (req, res, next) => {
 	// find the user and their tasks
 	User.findOne({ googleId: userId }, function (err, doc) {
 		if (err) {
-			return next(
-				new Error("Error occured when searching for google account")
-			);
+			res.status(500).json({
+				message: "Something went wrong when searchig for user",
+			});
 		} else {
 			if (doc) {
 				// get user tasks from found document
@@ -88,9 +91,7 @@ export const editTask = async (req, res, next) => {
 					foundTask.title = updatedTask.title;
 					foundTask.description = updatedTask.description;
 				} else {
-					return next(
-						new Error("Couldn't find task in users task list")
-					);
+					res.status(400).json({ message: "Task doesn't exist" });
 				}
 
 				// save the document
@@ -98,11 +99,7 @@ export const editTask = async (req, res, next) => {
 
 				res.status(200).json({ updatedTask: foundTask });
 			} else {
-				return next(
-					new Error(
-						"Failed to find account associated with google id"
-					)
-				);
+				res.status(400).json({ message: "Task doesn't exist" });
 			}
 		}
 	});
@@ -121,17 +118,13 @@ export const deleteTask = async (req, res, next) => {
 		{ $pull: { userTasks: { id: `${taskId}` } } },
 		function (err, doc) {
 			if (err) {
-				return next(
-					new Error("Error occured when searching for account")
-				);
+				res.status(500).json({
+					message: "Something went wrong when searching for user",
+				});
 			} else if (!doc) {
-				return next(
-					new Error(
-						"Failed to find account associated with google id"
-					)
-				);
+				res.status(400).json({ message: "User doesn't exist" });
 			} else {
-				res.status(204).json({ message: "deleted" });
+				res.status(200).json({ message: "deleted" });
 			}
 		}
 	);

@@ -71,6 +71,7 @@ app.use((req, res, next) => {
 // login routes
 app.use("/login", loginRoutes);
 
+// logout routes
 app.use("/logout", logoutRoutes);
 
 // stats routes

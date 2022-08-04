@@ -16,9 +16,10 @@ export const loginUser = async (req, res, next) => {
 
 	// if no tokens are obtained, throw an error
 	if (!tokens) {
-		return next(new Error("Tokens couldn't be extracted"));
+		res.status(400).json({ message: "Invalid code" });
 	}
 
+	// create cookie for user
 	if (!req.cookies || !req.cookies.secureCookie) {
 		res.cookie(
 			"REFRESH_TOKEN",
@@ -39,7 +40,7 @@ export const loginUser = async (req, res, next) => {
 // uses users refresh token to get a new access token
 export const refreshToken = async (req, res, next) => {
 	if (!req.cookies.REFRESH_TOKEN) {
-		return next(new Error("no refresh token found"));
+		res.status(400).json({ message: "No cookie found" });
 	} else {
 		const refreshToken = JSON.parse(req.cookies.REFRESH_TOKEN);
 		const user = new UserRefreshClient(
@@ -50,9 +51,15 @@ export const refreshToken = async (req, res, next) => {
 
 		const { credentials } = await user.refreshAccessToken();
 
-		// if no credentials return error, else return new access token
+		// if no credentials return error and destroy the cookie as it is no longer valid, else return new access token
 		if (!credentials) {
-			return next(new Error("failed to refresh access token"));
+			res.cookie("REFRESH_TOKEN", "", {
+				secure: true,
+				httpOnly: true,
+				sameSite: "none",
+				maxAge: 0,
+			});
+			res.status(400).json({ message: "Invalid refresh token" });
 		} else {
 			res.status(200).json({ accessToken: credentials.access_token });
 		}
@@ -65,9 +72,11 @@ export const findOrCreateUser = (req, res, next) => {
 		{ username: req.body.name, googleId: req.body.id },
 		function (err, user) {
 			if (err) {
-				return next(new Error("User couldn't be created/found"));
+				res.status(500).json({
+					message:
+						"Something went wrong went with finding/creating the user",
+				});
 			} else {
-				console.log(user);
 				res.status(200).json({ settings: user.settings });
 			}
 		}

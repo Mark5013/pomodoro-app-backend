@@ -21,15 +21,15 @@ const months = {
 export const updateMinutes = async (req, res, next) => {
 	// extract day, month, dayNum, year from body
 	const [year, month, dayNum] = req.body.dateStr.split("-");
-	console.log(req.body.millisecondsPassed);
+
 	// find user by googleId
 	User.findOne({ googleId: req.body.userId }, function (err, doc) {
 		if (err) {
-			return next(new Error("Something went wrong looking for user"));
+			res.status(500).json({
+				message: "Something went wrong when searching for user",
+			});
 		} else if (!doc) {
-			return next(
-				new Error("Couldn't find user associated with google id")
-			);
+			res.status(400).json({ message: "User doesn't exist" });
 		} else {
 			// find proper date in array of dates
 			let dateObj = doc.userLogs.find(
@@ -56,6 +56,7 @@ export const updateMinutes = async (req, res, next) => {
 
 			// save user
 			doc.save();
+			res.status(200).json({ message: "Updated successfully" });
 		}
 	});
 };
@@ -70,11 +71,11 @@ export const getDatesMinutes = (req, res, next) => {
 	// find user in data base with matching google id
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
-			return next(
-				new Error("Something went wrong when searching for user!")
-			);
+			res.status(500).json({
+				message: "Something went wrong when searching for user",
+			});
 		} else if (!doc) {
-			return next(new Error("No user found"));
+			res.status(400).json({ message: "User doesn't exist" });
 		} else {
 			// find the specific date
 			const result = doc.userLogs.find(
@@ -105,11 +106,11 @@ export const getMonthsMinutes = (req, res, next) => {
 	// find user in database with google id
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
-			return next(
-				new Error("Something went wrong when searching for user")
-			);
+			res.status(500).json({
+				message: "Something went wrong when searching for user",
+			});
 		} else if (!doc) {
-			return next(new Error("No user found"));
+			res.status(400).json({ message: "User doesn't exist" });
 		} else {
 			// accumulate total time over selected month in current year
 			const totalTime = doc.userLogs.reduce(
@@ -133,11 +134,11 @@ export const getYearsMinutes = (req, res, next) => {
 
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
-			return next(
-				new Error("Something went wrong when searching for user")
-			);
+			res.status.json({
+				message: "Something went wrong when searching for user",
+			});
 		} else if (!doc) {
-			return next(new Error("No user found"));
+			res.status.sjon({ message: "User doesn't exist" });
 		} else {
 			// accumulate total time over the selected year
 			const totalTime = doc.userLogs.reduce(
@@ -158,11 +159,11 @@ export const getMonthAndYearMinutes = (req, res, next) => {
 	// search database for user with google id
 	User.findOne({ googleId: uid }, function (err, doc) {
 		if (err) {
-			return next(
-				new Error("Something went wrong when searching for user!")
-			);
+			res.status(500).json({
+				message: "Something went wrong when searching for user",
+			});
 		} else if (!doc) {
-			return next(new Error("No user found"));
+			res.status(400).json({ message: "User doesn't exist" });
 		} else {
 			// accumulate total time over the selected month in the selected year
 			const totalTime = doc.userLogs.reduce(

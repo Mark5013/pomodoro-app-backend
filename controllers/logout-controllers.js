@@ -1,3 +1,4 @@
+// logs user out, and destroys cookie so they aren't automatically logged in again
 export const logoutUser = (req, res, next) => {
 	if (req.cookies.REFRESH_TOKEN) {
 		res.cookie("REFRESH_TOKEN", "", {
@@ -8,6 +9,6 @@ export const logoutUser = (req, res, next) => {
 		});
 		res.status(200).json({ message: "cookie destroyed" });
 	} else {
-		return next(new Error("No cookie found"));
+		res.status(200).json({ message: "No cookie found" });
 	}
 };
