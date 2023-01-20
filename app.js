@@ -8,6 +8,7 @@ import { userTasksRoutes } from "./routes/userTasks-routes.js";
 import { userSettingsRoutes } from "./routes/userSettings-routes.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
+import cors from "cors";
 dotenv.config();
 
 const app = express();
@@ -73,6 +74,14 @@ app.use((req, res, next) => {
 	res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE");
 	next();
 });
+
+const corsOptions = {
+	origin: "*",
+	credentials: true,
+	optionSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
 
 // login routes
 app.use("/login", loginRoutes);
